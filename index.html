@@ -14,7 +14,7 @@
   h1 i { font-style:normal; color:var(--plasma); }
   .sub { color:var(--muted); font-size:12px; letter-spacing:.06em; text-transform:uppercase; }
   .meter { display:flex; justify-content:space-between; align-items:flex-end; }
-  .kw b { display:block; font-size:34px; line-height:.9; font-variant-numeric:tabular-nums; }
+  .kw b { display:block; font-size:34px; line-height:.9; font-variant-numeric:tabular-nums; text-shadow:0 0 18px rgba(62,224,255,.35); }
   .kw span, .pill span { color:var(--muted); font-size:11px; letter-spacing:.12em; text-transform:uppercase; }
   .pills { display:flex; gap:6px; }
   .pill { background:rgba(10,12,16,.72); border:1px solid rgba(224,161,92,.28); border-radius:12px; padding:6px 8px; min-width:72px; }
@@ -23,44 +23,45 @@
   .stage { flex:1; min-height:0; display:flex; align-items:center; }
   .frame { width:100%; border-radius:22px; padding:8px; background:rgba(6,8,12,.84); border:1px solid rgba(154,146,134,.28); position:relative; }
   .frame.live { border-color:rgba(125,255,168,.75); box-shadow:0 0 22px rgba(62,224,255,.25); }
+  .frame.zoom { animation:flash 1.1s ease; }
+  @keyframes flash { 30% { box-shadow:0 0 28px #7dffa8; border-color:#7dffa8; } }
   .viewport { width:100%; aspect-ratio:1; overflow:hidden; border-radius:14px; position:relative; touch-action:none; background:#0c1016; }
-  #world { position:absolute; left:0; top:0; display:grid; gap:2px; transform-origin:center center; transition:transform 1s ease; }
+  #world { position:absolute; left:0; top:0; display:grid; gap:2px; transform-origin:0 0; transition:transform .9s ease; }
   .cell { border-radius:4px; background:#161b22; position:relative; }
+  .cell.out { opacity:.28; }
   .cell.path { background:linear-gradient(180deg,#d39255,#6a3f22); }
   .cell.machine { background:radial-gradient(circle at 50% 42%, #b9ecff, #1b4a58 64%); }
   .cell.source { background:radial-gradient(circle at 50% 42%, #ffe3a6, #d36a14 58%, #2a2118 74%); }
-  .cell.xfmr { background:radial-gradient(circle at 50% 50%, #d7c8ff, #2a3148 68%); }
-  .cell.load { background:radial-gradient(circle at 50% 40%, #9dffe0, #145c48 70%); box-shadow:0 0 12px rgba(125,255,168,.8); }
-  .cell.ghost { outline:2px solid rgba(62,224,255,.95); background:rgba(62,224,255,.22) !important; }
-  .cell.bad { outline:2px solid #ff5d4a; }
-  .cell.powered { box-shadow:inset 0 0 0 1px rgba(180,245,255,.75); }
+  .cell.xfmr { background:radial-gradient(circle at 50% 50%, #d7c8ff, #2a3158 70%); }
+  .cell.load { background:radial-gradient(circle at 50% 50%, #b6ffcf, #1d6b3a 70%); box-shadow:0 0 10px rgba(125,255,168,.45); }
+  .cell.load::after { content:"town"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:9px; letter-spacing:.04em; color:#04210f; }
+  .cell.powered { box-shadow:inset 0 0 0 2px rgba(180,245,255,.85); animation:pulse 1.4s ease-in-out infinite; }
   .cell.fed { box-shadow:0 0 16px #7dffa8, inset 0 0 0 2px #7dffa8; }
-  .bang { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(4,10,12,.55); z-index:4; }
-  .bang div { text-align:center; animation:pop .7s ease; }
-  .bang b { display:block; font-size:28px; letter-spacing:.08em; color:#7dffa8; }
-  .bang span { color:#f4efe6; }
+  .cell.ghost { outline:2px solid #3ee0ff; }
+  .cell.bad { outline:2px solid #ff5d4a; }
+  @keyframes pulse { 50% { filter:brightness(1.25); } }
+  .bang { position:absolute; inset:8px; display:flex; align-items:center; justify-content:center; background:rgba(4,10,12,.62); z-index:4; border-radius:14px; }
+  .bang div { text-align:center; animation:pop .55s ease; }
+  .bang b { display:block; font-size:26px; letter-spacing:.08em; color:#7dffa8; }
+  .bang span { color:#f4efe6; font-size:14px; }
   @keyframes pop { from { transform:scale(.6); opacity:0; } to { transform:scale(1); opacity:1; } }
+  .hidden { display:none !important; }
   .coach { background:rgba(12,16,22,.94); border:1px solid rgba(62,224,255,.35); border-radius:14px; padding:10px 12px; }
   .coach b { display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--plasma); }
   .coach p { margin:4px 0 0; font-size:14px; line-height:1.35; }
   .row { display:flex; gap:8px; margin-top:8px; }
-  .tray { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
-  .slot { height:78px; border-radius:14px; background:rgba(8,10,14,.72); border:1px solid rgba(224,161,92,.22); display:flex; align-items:center; justify-content:center; touch-action:none; position:relative; }
-  .slot em { position:absolute; bottom:4px; font-style:normal; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  button { background:#121820; color:var(--ink); border:1px solid rgba(154,146,134,.4); border-radius:10px; padding:10px 12px; font:inherit; }
+  #next { color:#04210f; background:var(--good); border:0; font-weight:600; }
+  .tray { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; min-height:84px; }
+  .slot { min-height:78px; border-radius:12px; background:rgba(10,12,16,.72); border:1px solid rgba(154,146,134,.25); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; touch-action:none; }
+  .slot em { font-style:normal; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
   .piece { display:grid; gap:2px; }
-  .pip { width:14px; height:14px; border-radius:3px; }
-  .pip.path { background:linear-gradient(180deg,#f0b56a,#8a4e28); }
-  .pip.machine { background:radial-gradient(circle,#b7ecff,#1d4d5c 70%); }
-  .pip.source { background:radial-gradient(circle,#ffe0a0,#d06a16 68%); }
-  .pip.xfmr { background:radial-gradient(circle,#d2c4ff,#39405c); }
-  button { appearance:none; border:0; border-radius:14px; color:var(--copper); background:#2a241c; font-family:inherit; letter-spacing:.12em; text-transform:uppercase; font-size:13px; padding:12px 8px; }
-  #next, #hide { flex:1; }
-  #hide { background:#14586c; color:var(--ink); }
-  .float { position:fixed; z-index:6; pointer-events:none; }
-  .hidden { display:none; }
-  .overlay { position:fixed; inset:0; background:rgba(4,6,10,.8); display:flex; align-items:center; justify-content:center; padding:22px; z-index:8; }
-  .card { width:min(340px,100%); background:rgba(12,14,18,.95); border:1px solid rgba(62,224,255,.3); border-radius:20px; padding:22px; text-align:center; }
-  .card p { color:var(--muted); line-height:1.45; }
+  .pip { border-radius:3px; }
+  .pip.source { background:#e0a15c; }
+  .pip.path { background:#d39255; }
+  .pip.machine { background:#7fd7ee; }
+  .pip.xfmr { background:#c3b0ff; }
+  .float { position:fixed; z-index:8; pointer-events:none; }
 </style>
 </head>
 <body>
@@ -68,9 +69,13 @@
   <div><h1>SHA<i>F</i>T</h1><div class="sub">finish a module · plant pulls back</div></div>
   <div class="meter">
     <div class="kw"><b id="kw">0</b><span>kilowatts</span></div>
-    <div class="pills"><div class="pill"><b id="mod">1</b><span>module</span></div><div class="pill"><b id="best">0</b><span>best</span></div></div>
+    <div class="pills">
+      <div class="pill"><b id="mod">1</b><span>module</span></div>
+      <div class="pill"><b id="view">8×8</b><span>view</span></div>
+      <div class="pill"><b id="best">0</b><span>best</span></div>
+    </div>
   </div>
-  <div class="goal" id="goal">Module 1: run power into the green load.</div>
+  <div class="goal" id="goal">Module 1: run power into the green town.</div>
   <div class="stage">
     <div class="frame" id="frame">
       <div class="viewport" id="viewport"><div id="world"></div></div>
@@ -78,8 +83,8 @@
     </div>
   </div>
   <div class="coach" id="coach">
-    <b id="step">how</b>
-    <p id="lesson">Drag the gold core, connect copper bus to the green load. That finishes the module. The plant then shrinks and more yard opens.</p>
+    <b id="step">step 1 of 4</b>
+    <p id="lesson"></p>
     <div class="row"><button id="next">next</button><button id="hide">hide</button></div>
   </div>
   <div class="tray" id="tray"></div>
@@ -91,10 +96,10 @@
 const N = 24, VIEWS = [8, 12, 16, 24];
 const NAMES = { source:"core", path:"bus", machine:"turbine", xfmr:"transformer" };
 const LESSONS = [
-  "Drag the gold core onto the pad. It is the only source.",
-  "A core alone scores 0. Run copper bus from it toward the green load.",
-  "A turbine on that live path adds kilowatts. Off the path, it does nothing.",
-  "Touch the green load with a powered piece. Module complete, then the plant pulls back."
+  "Drag the gold core onto the pad. It is the only source. A core with no path out scores 0.",
+  "Run copper bus from the core toward the green town. Current only travels on connected pieces.",
+  "A turbine or transformer on that live path multiplies kilowatts. Off the path, it does nothing.",
+  "Touch the green town with a powered piece. Module complete, then the plant pulls back and a new town appears farther out."
 ];
 const CATALOG = [
   { kind:"source", shape:[[1,1],[1,1]] },
@@ -117,9 +122,12 @@ const floatEl = document.getElementById("float");
 const coach = document.getElementById("coach");
 const bang = document.getElementById("bang");
 let grid, tray, drag, view, best, cells = [], load, busy, step, lessonsOn;
-
 function empty() { return Array.from({length:N}, () => Array(N).fill(null)); }
 function windowOrigin() { return Math.floor((N - VIEWS[view]) / 2); }
+function inView(r, c) {
+  const o = windowOrigin(), s = VIEWS[view];
+  return r >= o && c >= o && r < o + s && c < o + s;
+}
 function placeLoad() {
   const o = windowOrigin(), s = VIEWS[view];
   load = { r: o + s - 2, c: o + s - 2 };
@@ -139,14 +147,15 @@ function pick(force) {
   return { kind:src.kind, shape:src.shape.map(r => r.slice()), used:false };
 }
 function freshTray() {
-  const has = grid.flat().some(c => c && c.kind==="source");
-  tray = [0,1,2].map(i => pick(!has && i===0));
+  const hasSource = grid.flat().some(c => c && c.kind==="source");
+  tray = [pick(!hasSource), pick(false), pick(false)];
 }
 function fits(shape, r, c) {
   for (let y=0;y<shape.length;y++) for (let x=0;x<shape[y].length;x++) {
     if (!shape[y][x]) continue;
     const nr=r+y, nc=c+x;
     if (nr<0||nc<0||nr>=N||nc>=N||grid[nr][nc]) return false;
+    if (!inView(nr, nc)) return false;
     if (load && nr===load.r && nc===load.c) return false;
   }
   return true;
@@ -176,31 +185,32 @@ function analyze() {
 }
 function layout() {
   const S = viewport.clientWidth || 300;
-  const cell = S / 8;
+  const v = VIEWS[view];
+  const cell = S / v;
   worldEl.style.width = (N*cell)+"px";
   worldEl.style.height = (N*cell)+"px";
   worldEl.style.gridTemplateColumns = `repeat(${N}, ${cell}px)`;
   worldEl.style.gridTemplateRows = `repeat(${N}, ${cell}px)`;
-  const scale = 8 / VIEWS[view];
-  const world = N * cell;
-  const shift = (S - world) / 2;
-  worldEl.style.transform = `translate(${shift}px, ${shift}px) scale(${scale})`;
+  const o = windowOrigin();
+  worldEl.style.transformOrigin = "0 0";
+  worldEl.style.transform = `translate(${-o*cell}px, ${-o*cell}px)`;
 }
 function paint() {
   const a = analyze();
   cells.forEach((el, i) => {
     const r = Math.floor(i/N), c = i%N, cell = grid[r][c];
     const isLoad = load && r===load.r && c===load.c;
-    el.className = "cell" + (isLoad?" load":"") + (cell?" "+cell.kind:"") + (cell && a.powered[r][c]?" powered":"") + (isLoad && a.feed?" fed":"");
+    el.className = "cell" + (inView(r,c)?"":" out") + (isLoad?" load":"") + (cell?" "+cell.kind:"") + (cell && a.powered[r][c]?" powered":"") + (isLoad && a.feed?" fed":"");
   });
   document.getElementById("kw").textContent = a.kw;
   document.getElementById("mod").textContent = Math.min(view+1, VIEWS.length);
+  document.getElementById("view").textContent = VIEWS[view] + "×" + VIEWS[view];
   document.getElementById("best").textContent = best;
-  frameEl.className = "frame" + (a.feed?" live":"");
+  frameEl.classList.toggle("live", !!a.feed);
   document.getElementById("goal").textContent = view >= VIEWS.length-1 && a.feed
     ? "Plant complete. This is the whole yard."
-    : "Module " + (view+1) + ": run power into the green load.";
-  if (a.kw > best) { best = a.kw; localStorage.setItem("shaft-best3", String(best)); document.getElementById("best").textContent = best; }
+    : "Module " + (view+1) + ": run power into the green town.";
+  if (a.kw > best) { best = a.kw; localStorage.setItem("shaft-best4", String(best)); document.getElementById("best").textContent = best; }
   return a;
 }
 function pieceHTML(p, size) {
@@ -215,28 +225,32 @@ function showLesson() {
   if (!lessonsOn) { coach.classList.add("hidden"); document.getElementById("show").classList.remove("hidden"); return; }
   coach.classList.remove("hidden");
   document.getElementById("show").classList.add("hidden");
+  document.getElementById("step").textContent = "step " + (Math.min(step, LESSONS.length-1)+1) + " of " + LESSONS.length;
   document.getElementById("lesson").textContent = LESSONS[Math.min(step, LESSONS.length-1)];
   document.getElementById("next").textContent = step >= LESSONS.length-1 ? "done" : "next";
 }
 function celebrate() {
   busy = true;
   document.getElementById("bangTitle").textContent = "MODULE " + (view+1) + " COMPLETE";
-  document.getElementById("bangSub").textContent = view >= VIEWS.length-1 ? "Plant is open" : "Pulling back";
+  document.getElementById("bangSub").textContent = view >= VIEWS.length-1 ? "The yard is open" : "Pulling back";
   bang.classList.remove("hidden");
+  frameEl.classList.add("zoom");
   setTimeout(() => {
     if (view < VIEWS.length-1) { view++; placeLoad(); layout(); }
     paint();
-    setTimeout(() => { bang.classList.add("hidden"); busy = false; }, 900);
-  }, 1100);
+    setTimeout(() => { bang.classList.add("hidden"); frameEl.classList.remove("zoom"); busy = false; }, 1100);
+  }, 700);
 }
 function place(p, r, c) {
+  const before = analyze().feed;
   for (let y=0;y<p.shape.length;y++) for (let x=0;x<p.shape[y].length;x++) if (p.shape[y][x]) grid[r+y][c+x] = { kind:p.kind };
   p.used = true;
-  const before = analyze().feed;
   if (tray.every(t => t.used)) freshTray();
   const a = paint();
   renderTray();
   if (!before && a.feed) celebrate();
+  else if (step === 0 && p.kind === "source") { step = 1; showLesson(); }
+  else if (step === 1 && p.kind === "path") { step = 2; showLesson(); }
 }
 function cellAt(x, y) {
   return cells.find(el => { const r = el.getBoundingClientRect(); return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom; });
@@ -288,6 +302,7 @@ function bindTray() {
       const p = drag.p; drag = null;
       if (spot) place(p, spot.r, spot.c);
     };
+    slot.onpointercancel = () => { drag = null; floatEl.classList.add("hidden"); };
   });
 }
 function boot() {
@@ -302,10 +317,6 @@ function boot() {
   layout(); paint(); renderTray();
 }
 document.getElementById("reset").onclick = boot;
-addEventListener("resize", layout);
-best = Number(localStorage.getItem("shaft-best3")||0);
-document.getElementById("best").textContent = best;
-boot();
 document.getElementById("show").onclick = () => { lessonsOn = true; localStorage.removeItem("shaft-lessons"); showLesson(); };
 document.getElementById("hide").onclick = () => { lessonsOn = false; localStorage.setItem("shaft-lessons","off"); showLesson(); };
 document.getElementById("next").onclick = () => {
@@ -313,8 +324,9 @@ document.getElementById("next").onclick = () => {
   step++; showLesson();
 };
 addEventListener("resize", layout);
-best = Number(localStorage.getItem("shaft-best3")||0);
+best = Number(localStorage.getItem("shaft-best4")||0);
 document.getElementById("best").textContent = best;
+boot();
 </script>
 </body>
 </html>
