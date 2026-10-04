@@ -5,85 +5,81 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>Shaft</title>
 <style>
-  :root { --ink:#f4efe6; --muted:#9a9286; --plasma:#3ee0ff; --copper:#e0a15c; --good:#7dffa8; --warn:#ff8a3d; }
+  :root { --ink:#f4efe6; --muted:#9a9286; --plasma:#3ee0ff; --good:#7dffa8; --warn:#ff8a3d; --copper:#e0a15c; }
   * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html, body { margin:0; height:100%; background:#07090d; color:var(--ink); font-family:"Avenir Next","Segoe UI",sans-serif; }
   body { background:radial-gradient(120% 70% at 50% -10%, #1a3140, #07090d 52%); }
   .app { width:min(430px,100vw); height:100dvh; margin:0 auto; display:flex; flex-direction:column; padding:10px 12px 12px; gap:8px; }
-  header { display:flex; justify-content:space-between; align-items:flex-end; }
   h1 { margin:0; letter-spacing:.22em; font-size:22px; font-weight:600; }
   h1 i { font-style:normal; color:var(--plasma); }
   .sub { color:var(--muted); font-size:12px; letter-spacing:.06em; text-transform:uppercase; }
-  #learn { background:transparent; color:var(--plasma); border:1px solid rgba(62,224,255,.4); padding:8px 10px; letter-spacing:.08em; }
   .meter { display:flex; justify-content:space-between; align-items:flex-end; }
-  .kw b { display:block; font-size:36px; line-height:.9; font-variant-numeric:tabular-nums; text-shadow:0 0 18px rgba(62,224,255,.35); }
-  .kw span, .pill span { color:var(--muted); font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
+  .kw b { display:block; font-size:34px; line-height:.9; font-variant-numeric:tabular-nums; }
+  .kw span, .pill span { color:var(--muted); font-size:11px; letter-spacing:.12em; text-transform:uppercase; }
   .pills { display:flex; gap:6px; }
-  .pill { background:rgba(10,12,16,.72); border:1px solid rgba(224,161,92,.28); border-radius:12px; padding:6px 8px; min-width:68px; }
-  .pill b { display:block; font-size:16px; font-variant-numeric:tabular-nums; }
+  .pill { background:rgba(10,12,16,.72); border:1px solid rgba(224,161,92,.28); border-radius:12px; padding:6px 8px; min-width:72px; }
+  .pill b { display:block; font-size:16px; }
+  .goal { color:var(--good); font-size:13px; min-height:18px; }
   .stage { flex:1; min-height:0; display:flex; align-items:center; }
-  .frame { width:100%; border-radius:22px; padding:8px; background:rgba(6,8,12,.84); border:1px solid rgba(154,146,134,.28); }
-  .frame.live { border-color:rgba(125,255,168,.7); box-shadow:0 0 22px rgba(62,224,255,.22); }
-  .frame.open { border-color:rgba(255,138,61,.7); }
-  .frame.zoom { animation:pop .6s ease; }
-  @keyframes pop { 40% { transform:scale(.96); } }
-  .viewport { width:100%; aspect-ratio:1; overflow:hidden; border-radius:14px; position:relative; touch-action:none; }
-  #world { position:absolute; left:0; top:0; display:grid; gap:2px; transition:transform .7s ease; }
-  .cell { border-radius:5px; background:#12161c; box-shadow:inset 0 0 0 1px rgba(255,255,255,.04); position:relative; }
+  .frame { width:100%; border-radius:22px; padding:8px; background:rgba(6,8,12,.84); border:1px solid rgba(154,146,134,.28); position:relative; }
+  .frame.live { border-color:rgba(125,255,168,.75); box-shadow:0 0 22px rgba(62,224,255,.25); }
+  .viewport { width:100%; aspect-ratio:1; overflow:hidden; border-radius:14px; position:relative; touch-action:none; background:#0c1016; }
+  #world { position:absolute; left:0; top:0; display:grid; gap:2px; transform-origin:center center; transition:transform 1s ease; }
+  .cell { border-radius:4px; background:#161b22; position:relative; }
   .cell.path { background:linear-gradient(180deg,#d39255,#6a3f22); }
   .cell.machine { background:radial-gradient(circle at 50% 42%, #b9ecff, #1b4a58 64%); }
   .cell.source { background:radial-gradient(circle at 50% 42%, #ffe3a6, #d36a14 58%, #2a2118 74%); }
   .cell.xfmr { background:radial-gradient(circle at 50% 50%, #d7c8ff, #2a3148 68%); }
-  .cell.load { background:radial-gradient(circle at 50% 40%, #9dffe0, #145c48 70%); box-shadow:0 0 12px rgba(125,255,168,.7); }
-  .cell.ghost { outline:2px solid rgba(62,224,255,.95); background:rgba(62,224,255,.2) !important; }
+  .cell.load { background:radial-gradient(circle at 50% 40%, #9dffe0, #145c48 70%); box-shadow:0 0 12px rgba(125,255,168,.8); }
+  .cell.ghost { outline:2px solid rgba(62,224,255,.95); background:rgba(62,224,255,.22) !important; }
   .cell.bad { outline:2px solid #ff5d4a; }
-  .cell.powered { box-shadow:inset 0 0 0 1px rgba(180,245,255,.7), 0 0 8px rgba(62,224,255,.35); }
-  .cell.fed { box-shadow:inset 0 0 0 2px #7dffa8, 0 0 14px rgba(125,255,168,.9); }
-  #fx { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .cell.powered { box-shadow:inset 0 0 0 1px rgba(180,245,255,.75); }
+  .cell.fed { box-shadow:0 0 16px #7dffa8, inset 0 0 0 2px #7dffa8; }
+  .bang { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(4,10,12,.55); z-index:4; }
+  .bang div { text-align:center; animation:pop .7s ease; }
+  .bang b { display:block; font-size:28px; letter-spacing:.08em; color:#7dffa8; }
+  .bang span { color:#f4efe6; }
+  @keyframes pop { from { transform:scale(.6); opacity:0; } to { transform:scale(1); opacity:1; } }
   .coach { background:rgba(12,16,22,.94); border:1px solid rgba(62,224,255,.35); border-radius:14px; padding:10px 12px; }
-  .coach b { display:block; letter-spacing:.08em; text-transform:uppercase; font-size:11px; color:var(--plasma); margin-bottom:4px; }
-  .coach p { margin:0; font-size:14px; line-height:1.35; }
-  .coach .row { display:flex; gap:8px; margin-top:8px; }
-  .coach button { flex:1; }
-  #hide { background:#14586c; color:var(--ink); }
+  .coach b { display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--plasma); }
+  .coach p { margin:4px 0 0; font-size:14px; line-height:1.35; }
+  .row { display:flex; gap:8px; margin-top:8px; }
   .tray { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
-  .slot { height:84px; border-radius:14px; background:rgba(8,10,14,.72); border:1px solid rgba(224,161,92,.22); display:flex; align-items:center; justify-content:center; touch-action:none; position:relative; }
+  .slot { height:78px; border-radius:14px; background:rgba(8,10,14,.72); border:1px solid rgba(224,161,92,.22); display:flex; align-items:center; justify-content:center; touch-action:none; position:relative; }
   .slot em { position:absolute; bottom:4px; font-style:normal; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
   .piece { display:grid; gap:2px; }
-  .pip { width:15px; height:15px; border-radius:3px; }
+  .pip { width:14px; height:14px; border-radius:3px; }
   .pip.path { background:linear-gradient(180deg,#f0b56a,#8a4e28); }
-  .pip.machine { background:radial-gradient(circle at 50% 45%, #b7ecff, #1d4d5c 70%); }
-  .pip.source { background:radial-gradient(circle at 50% 45%, #ffe0a0, #d06a16 68%); }
-  .pip.xfmr { background:radial-gradient(circle, #d2c4ff, #39405c); }
+  .pip.machine { background:radial-gradient(circle,#b7ecff,#1d4d5c 70%); }
+  .pip.source { background:radial-gradient(circle,#ffe0a0,#d06a16 68%); }
+  .pip.xfmr { background:radial-gradient(circle,#d2c4ff,#39405c); }
   button { appearance:none; border:0; border-radius:14px; color:var(--copper); background:#2a241c; font-family:inherit; letter-spacing:.12em; text-transform:uppercase; font-size:13px; padding:12px 8px; }
+  #next, #hide { flex:1; }
+  #hide { background:#14586c; color:var(--ink); }
   .float { position:fixed; z-index:6; pointer-events:none; }
-  .toast { position:fixed; left:50%; top:18%; transform:translateX(-50%); background:#123e34; color:var(--good); border-radius:999px; padding:10px 16px; z-index:7; letter-spacing:.06em; }
+  .hidden { display:none; }
   .overlay { position:fixed; inset:0; background:rgba(4,6,10,.8); display:flex; align-items:center; justify-content:center; padding:22px; z-index:8; }
   .card { width:min(340px,100%); background:rgba(12,14,18,.95); border:1px solid rgba(62,224,255,.3); border-radius:20px; padding:22px; text-align:center; }
   .card p { color:var(--muted); line-height:1.45; }
-  .hidden { display:none; }
 </style>
 </head>
 <body>
 <div class="app">
-  <header>
-    <div><h1>SHA<i>F</i>T</h1><div class="sub">feed the load · plant grows</div></div>
-  </header>
+  <div><h1>SHA<i>F</i>T</h1><div class="sub">finish a module · plant pulls back</div></div>
   <div class="meter">
     <div class="kw"><b id="kw">0</b><span>kilowatts</span></div>
-    <div class="pills">
-      <div class="pill"><b id="span">8×8</b><span>view</span></div>
-      <div class="pill"><b id="best">0</b><span>best</span></div>
-    </div>
+    <div class="pills"><div class="pill"><b id="mod">1</b><span>module</span></div><div class="pill"><b id="best">0</b><span>best</span></div></div>
   </div>
+  <div class="goal" id="goal">Module 1: run power into the green load.</div>
   <div class="stage">
     <div class="frame" id="frame">
-      <div class="viewport" id="viewport"><div id="world"></div><canvas id="fx"></canvas></div>
+      <div class="viewport" id="viewport"><div id="world"></div></div>
+      <div class="bang hidden" id="bang"><div><b id="bangTitle">MODULE 1 COMPLETE</b><span id="bangSub">Pulling back</span></div></div>
     </div>
   </div>
   <div class="coach" id="coach">
-    <b id="step">step 1 of 4</b>
-    <p id="lesson">Drag the gold core onto the pad. Then tap next.</p>
+    <b id="step">how</b>
+    <p id="lesson">Drag the gold core, connect copper bus to the green load. That finishes the module. The plant then shrinks and more yard opens.</p>
     <div class="row"><button id="next">next</button><button id="hide">hide</button></div>
   </div>
   <div class="tray" id="tray"></div>
@@ -91,11 +87,10 @@
   <button id="show" class="hidden">lessons</button>
 </div>
 <div class="float hidden" id="float"></div>
-<div class="toast hidden" id="toast">Plant pulling back</div>
 <div class="overlay" id="overlay">
   <div class="card">
     <h2>SHAFT</h2>
-    <p>Four short lessons sit under the board. Next moves them. Hide puts them away. They come back from the lesson button after that.</p>
+    <p>Each module has one job: feed the green load. When you do, it celebrates, then zooms out so you can keep building the same plant.</p>
     <button id="start" style="background:#14586c;color:#f4efe6">start</button>
   </div>
 </div>
@@ -103,10 +98,10 @@
 const N = 24, VIEWS = [8, 12, 16, 24];
 const NAMES = { source:"core", path:"bus", machine:"turbine", xfmr:"transformer" };
 const LESSONS = [
-  ["Step 1 of 4", "Drag the gold core onto the pad. It is the only source. Tap next when it is down."],
-  ["Step 2 of 4", "A core alone scores 0. That is an open circuit. Run the copper bus from the core toward the green load."],
-  ["Step 3 of 4", "Put a turbine on that live path. Machines only add kilowatts if power can reach them. Off the path, they are just metal."],
-  ["Step 4 of 4", "Touch the green load with a powered piece. That feeds the town. The view then pulls back so the same plant can keep growing."]
+  "Drag the gold core onto the pad. It is the only source.",
+  "A core alone scores 0. Run copper bus from it toward the green load.",
+  "A turbine on that live path adds kilowatts. Off the path, it does nothing.",
+  "Touch the green load with a powered piece. Module complete, then the plant pulls back."
 ];
 const CATALOG = [
   { kind:"source", shape:[[1,1],[1,1]] },
@@ -124,18 +119,16 @@ const CATALOG = [
 const worldEl = document.getElementById("world");
 const viewport = document.getElementById("viewport");
 const frameEl = document.getElementById("frame");
-const fx = document.getElementById("fx");
-const fctx = fx.getContext("2d");
 const trayEl = document.getElementById("tray");
 const floatEl = document.getElementById("float");
 const coach = document.getElementById("coach");
-const toast = document.getElementById("toast");
-let grid, tray, drag, view, best, cells = [], load, reached, step, lessonsOn;
+const bang = document.getElementById("bang");
+let grid, tray, drag, view, best, cells = [], load, busy, step, lessonsOn;
 
 function empty() { return Array.from({length:N}, () => Array(N).fill(null)); }
-function origin() { return Math.floor((N - VIEWS[view]) / 2); }
+function windowOrigin() { return Math.floor((N - VIEWS[view]) / 2); }
 function placeLoad() {
-  const o = origin(), s = VIEWS[view];
+  const o = windowOrigin(), s = VIEWS[view];
   load = { r: o + s - 2, c: o + s - 2 };
 }
 function anchorOf(shape) {
@@ -170,7 +163,7 @@ function analyze() {
   const q = [];
   for (let r=0;r<N;r++) for (let c=0;c<N;c++) if (grid[r][c] && grid[r][c].kind==="source") q.push([r,c]);
   const seen = new Set(q.map(([r,c]) => r+","+c));
-  let feed = false, n = 0, machines = 0, sources = 0;
+  let feed = false, n = 0, machines = 0;
   while (q.length) {
     const [r,c] = q.shift();
     powered[r][c] = true;
@@ -182,49 +175,39 @@ function analyze() {
     }
   }
   for (let r=0;r<N;r++) for (let c=0;c<N;c++) {
-    if (!grid[r][c]) continue;
-    if (grid[r][c].kind==="source") sources++;
     if (!powered[r][c]) continue;
     n++;
     if (grid[r][c].kind==="machine" || grid[r][c].kind==="xfmr") machines++;
   }
-  return { powered, feed, sources, machines, kw: feed ? n*25 + machines*110 + reached*500 : 0 };
+  return { powered, feed, kw: feed ? n*25 + machines*110 + view*400 : 0 };
 }
-function showLesson() {
-  if (!lessonsOn) { coach.classList.add("hidden"); document.getElementById("show").classList.remove("hidden"); return; }
-  coach.classList.remove("hidden");
-  document.getElementById("show").classList.add("hidden");
-  const i = Math.min(step, LESSONS.length-1);
-  document.getElementById("step").textContent = LESSONS[i][0];
-  document.getElementById("lesson").textContent = LESSONS[i][1];
-  document.getElementById("next").textContent = step >= LESSONS.length-1 ? "done" : "next";
-}
-function advance(next) { if (step < next) { step = next; showLesson(); } }
 function layout() {
-  const size = viewport.clientWidth || 300;
-  const cell = size / VIEWS[view];
+  const S = viewport.clientWidth || 300;
+  const cell = S / 8;
   worldEl.style.width = (N*cell)+"px";
   worldEl.style.height = (N*cell)+"px";
   worldEl.style.gridTemplateColumns = `repeat(${N}, ${cell}px)`;
   worldEl.style.gridTemplateRows = `repeat(${N}, ${cell}px)`;
-  const o = origin();
-  worldEl.style.transform = `translate(${-o*cell}px, ${-o*cell}px)`;
-  const dpr = Math.min(devicePixelRatio||1, 2);
-  fx.width = Math.max(1, Math.floor(size*dpr));
-  fx.height = Math.max(1, Math.floor(size*dpr));
+  const scale = 8 / VIEWS[view];
+  const world = N * cell;
+  const shift = (S - world) / 2;
+  worldEl.style.transform = `translate(${shift}px, ${shift}px) scale(${scale})`;
 }
 function paint() {
   const a = analyze();
   cells.forEach((el, i) => {
     const r = Math.floor(i/N), c = i%N, cell = grid[r][c];
     const isLoad = load && r===load.r && c===load.c;
-    el.className = "cell" + (isLoad?" load":"") + (cell?" filled "+cell.kind:"") + (cell && a.powered[r][c]?" powered":"") + (isLoad && a.feed?" fed":"");
+    el.className = "cell" + (isLoad?" load":"") + (cell?" "+cell.kind:"") + (cell && a.powered[r][c]?" powered":"") + (isLoad && a.feed?" fed":"");
   });
   document.getElementById("kw").textContent = a.kw;
-  document.getElementById("span").textContent = VIEWS[view]+"×"+VIEWS[view];
+  document.getElementById("mod").textContent = Math.min(view+1, VIEWS.length);
   document.getElementById("best").textContent = best;
-  frameEl.className = "frame " + (a.feed?"live":a.sources?"open":"");
-  if (a.kw > best) { best = a.kw; localStorage.setItem("shaft-best2", String(best)); document.getElementById("best").textContent = best; }
+  frameEl.className = "frame" + (a.feed?" live":"");
+  document.getElementById("goal").textContent = view >= VIEWS.length-1 && a.feed
+    ? "Plant complete. This is the whole yard."
+    : "Module " + (view+1) + ": run power into the green load.";
+  if (a.kw > best) { best = a.kw; localStorage.setItem("shaft-best3", String(best)); document.getElementById("best").textContent = best; }
   return a;
 }
 function pieceHTML(p, size) {
@@ -232,37 +215,35 @@ function pieceHTML(p, size) {
   return `<div class="piece" style="grid-template-columns:repeat(${w},${size}px);grid-template-rows:repeat(${h},${size}px)">${p.shape.flat().map(v => v?`<div class="pip ${p.kind}"></div>`:"<div></div>").join("")}</div>`;
 }
 function renderTray() {
-  trayEl.innerHTML = tray.map((p,i) => `<div class="slot" data-i="${i}">${p&&!p.used?pieceHTML(p,15)+`<em>${NAMES[p.kind]}</em>`:""}</div>`).join("");
+  trayEl.innerHTML = tray.map((p,i) => `<div class="slot" data-i="${i}">${p&&!p.used?pieceHTML(p,14)+`<em>${NAMES[p.kind]}</em>`:""}</div>`).join("");
   bindTray();
 }
-function flash(text) {
-  toast.textContent = text;
-  toast.classList.remove("hidden");
-  clearTimeout(flash.t);
-  flash.t = setTimeout(() => toast.classList.add("hidden"), 1600);
+function showLesson() {
+  if (!lessonsOn) { coach.classList.add("hidden"); document.getElementById("show").classList.remove("hidden"); return; }
+  coach.classList.remove("hidden");
+  document.getElementById("show").classList.add("hidden");
+  document.getElementById("lesson").textContent = LESSONS[Math.min(step, LESSONS.length-1)];
+  document.getElementById("next").textContent = step >= LESSONS.length-1 ? "done" : "next";
 }
-function grow() {
-  if (view >= VIEWS.length-1) { flash("Plant is fully open"); return; }
-  reached++;
-  view++;
-  placeLoad();
-  layout();
-  frameEl.classList.add("zoom");
-  setTimeout(() => frameEl.classList.remove("zoom"), 700);
-  flash("Plant pulling back to "+VIEWS[view]+"×"+VIEWS[view]);
-  paint();
+function celebrate() {
+  busy = true;
+  document.getElementById("bangTitle").textContent = "MODULE " + (view+1) + " COMPLETE";
+  document.getElementById("bangSub").textContent = view >= VIEWS.length-1 ? "Plant is open" : "Pulling back";
+  bang.classList.remove("hidden");
+  setTimeout(() => {
+    if (view < VIEWS.length-1) { view++; placeLoad(); layout(); }
+    paint();
+    setTimeout(() => { bang.classList.add("hidden"); busy = false; }, 900);
+  }, 1100);
 }
 function place(p, r, c) {
   for (let y=0;y<p.shape.length;y++) for (let x=0;x<p.shape[y].length;x++) if (p.shape[y][x]) grid[r+y][c+x] = { kind:p.kind };
   p.used = true;
-  const before = analyze();
+  const before = analyze().feed;
   if (tray.every(t => t.used)) freshTray();
   const a = paint();
   renderTray();
-  if (a.sources) advance(1);
-  if (a.powered.flat().filter(Boolean).length > a.sources) advance(2);
-  if (a.machines) advance(3);
-  if (!before.feed && a.feed) { advance(4); setTimeout(grow, 500); }
+  if (!before && a.feed) celebrate();
 }
 function cellAt(x, y) {
   return cells.find(el => { const r = el.getBoundingClientRect(); return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom; });
@@ -293,7 +274,7 @@ function bindTray() {
   trayEl.querySelectorAll(".slot").forEach(slot => {
     slot.onpointerdown = e => {
       const p = tray[Number(slot.dataset.i)];
-      if (!p || p.used || !document.getElementById("overlay").classList.contains("hidden")) return;
+      if (!p || p.used || busy || !document.getElementById("overlay").classList.contains("hidden")) return;
       e.preventDefault();
       slot.setPointerCapture(e.pointerId);
       drag = { p, pid:e.pointerId };
@@ -316,67 +297,29 @@ function bindTray() {
     };
   });
 }
-function drawFx(now) {
-  fctx.clearRect(0,0,fx.width,fx.height);
-  if (!grid || !viewport.clientWidth) return requestAnimationFrame(drawFx);
-  const a = analyze();
-  const cell = viewport.clientWidth / VIEWS[view];
-  const o = origin(), dpr = fx.width / viewport.clientWidth, phase = ((now||0)/160)%1;
-  fctx.strokeStyle = a.feed ? "rgba(125,255,200,.9)" : "rgba(255,160,70,.75)";
-  fctx.fillStyle = "#f7feff";
-  fctx.lineWidth = Math.max(1.5, cell*0.08*dpr);
-  for (let r=o;r<o+VIEWS[view];r++) for (let c=o;c<o+VIEWS[view];c++) {
-    if (!a.powered[r][c]) continue;
-    for (const [dr,dc] of [[0,1],[1,0]]) {
-      const nr=r+dr, nc=c+dc;
-      if (nr>=N||nc>=N||!a.powered[nr][nc]) continue;
-      const x1=(c-o+.5)*cell*dpr, y1=(r-o+.5)*cell*dpr, x2=(nc-o+.5)*cell*dpr, y2=(nr-o+.5)*cell*dpr;
-      fctx.beginPath(); fctx.moveTo(x1,y1); fctx.lineTo(x2,y2); fctx.stroke();
-      fctx.beginPath(); fctx.arc(x1+(x2-x1)*phase, y1+(y2-y1)*phase, Math.max(1.4, cell*0.07*dpr), 0, 7); fctx.fill();
-    }
-  }
-  requestAnimationFrame(drawFx);
-}
 function boot() {
-  grid = empty(); view = 0; reached = 0; step = 0; tray = [];
+  grid = empty(); view = 0; busy = false; step = 0; tray = [];
   lessonsOn = localStorage.getItem("shaft-lessons")==="off" ? false : true;
   placeLoad();
   worldEl.innerHTML = grid.flat().map((_,i) => `<div class="cell" data-i="${i}"></div>`).join("");
   cells = [...worldEl.children];
   freshTray();
   document.getElementById("overlay").classList.add("hidden");
+  bang.classList.add("hidden");
   showLesson();
   layout(); paint(); renderTray();
 }
 document.getElementById("reset").onclick = boot;
 document.getElementById("start").onclick = boot;
-document.getElementById("hide").onclick = () => {
-  lessonsOn = false;
-  localStorage.setItem("shaft-lessons","off");
-  coach.classList.add("hidden");
-  document.getElementById("show").classList.remove("hidden");
-};
-document.getElementById("show").onclick = () => {
-  lessonsOn = true;
-  localStorage.removeItem("shaft-lessons");
-  showLesson();
-};
+document.getElementById("hide").onclick = () => { lessonsOn = false; localStorage.setItem("shaft-lessons","off"); showLesson(); };
+document.getElementById("show").onclick = () => { lessonsOn = true; localStorage.removeItem("shaft-lessons"); showLesson(); };
 document.getElementById("next").onclick = () => {
-  if (!lessonsOn) return;
-  if (step >= LESSONS.length-1) {
-    lessonsOn = false;
-    localStorage.setItem("shaft-lessons","off");
-    coach.classList.add("hidden");
-    document.getElementById("show").classList.remove("hidden");
-    return;
-  }
-  step++;
-  showLesson();
+  if (step >= LESSONS.length-1) { lessonsOn = false; localStorage.setItem("shaft-lessons","off"); showLesson(); return; }
+  step++; showLesson();
 };
 addEventListener("resize", layout);
-best = Number(localStorage.getItem("shaft-best2")||0);
+best = Number(localStorage.getItem("shaft-best3")||0);
 document.getElementById("best").textContent = best;
-requestAnimationFrame(drawFx);
 </script>
 </body>
 </html>
