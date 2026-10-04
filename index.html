@@ -87,13 +87,6 @@
   <button id="show" class="hidden">lessons</button>
 </div>
 <div class="float hidden" id="float"></div>
-<div class="overlay" id="overlay" onclick="boot()">
-  <div class="card">
-    <h2>SHAFT</h2>
-    <p>Tap anywhere. Feed the green load. The plant celebrates, then pulls back.</p>
-    <button id="start" type="button" onclick="boot()">start</button>
-  </div>
-</div>
 <script>
 const N = 24, VIEWS = [8, 12, 16, 24];
 const NAMES = { source:"core", path:"bus", machine:"turbine", xfmr:"transformer" };
@@ -274,7 +267,7 @@ function bindTray() {
   trayEl.querySelectorAll(".slot").forEach(slot => {
     slot.onpointerdown = e => {
       const p = tray[Number(slot.dataset.i)];
-      if (!p || p.used || busy || !document.getElementById("overlay").classList.contains("hidden")) return;
+      if (!p || p.used || busy) return;
       e.preventDefault();
       slot.setPointerCapture(e.pointerId);
       drag = { p, pid:e.pointerId };
@@ -304,18 +297,15 @@ function boot() {
   worldEl.innerHTML = grid.flat().map((_,i) => `<div class="cell" data-i="${i}"></div>`).join("");
   cells = [...worldEl.children];
   freshTray();
-  document.getElementById("overlay").classList.add("hidden");
   bang.classList.add("hidden");
   showLesson();
   layout(); paint(); renderTray();
 }
 document.getElementById("reset").onclick = boot;
-document.getElementById("overlay").addEventListener("pointerup", boot);
-document.getElementById("start").addEventListener("pointerup", boot);
 addEventListener("resize", layout);
 best = Number(localStorage.getItem("shaft-best3")||0);
 document.getElementById("best").textContent = best;
-setTimeout(boot, 400);
+boot();
 document.getElementById("show").onclick = () => { lessonsOn = true; localStorage.removeItem("shaft-lessons"); showLesson(); };
 document.getElementById("hide").onclick = () => { lessonsOn = false; localStorage.setItem("shaft-lessons","off"); showLesson(); };
 document.getElementById("next").onclick = () => {
